@@ -1,0 +1,167 @@
+{% extends "includes/base-dash.html" %}
+
+{% block title %} Transactions {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Modal Content -->
+<div class="modal fade" id="modal-form-signup" tabindex="-1" role="dialog" aria-labelledby="modal-form-signup" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="card p-3 p-lg-4">
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="text-center text-md-center mb-4 mt-md-0">
+                        <h1 class="mb-0 h4">Edit Task</h1>
+                    </div>
+                    <form>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div>
+                                    <label for="first_name">First Name</label>
+                                    <input class="form-control" id="first_name" type="text" placeholder="Enter your first name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div>
+                                    <label for="last_name">Last Name</label>
+                                    <input class="form-control" id="last_name" type="text" placeholder="Also your last name" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row align-items-center">
+                            <div class="col-md-6 mb-3">
+                                <label for="birthday">Birthday</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <svg class="icon icon-xs" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path></svg>
+                                    </span>
+                                    <input data-datepicker="" class="form-control" id="birthday" type="text" placeholder="dd/mm/yyyy" required>                                               
+                                  </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="gender">Gender</label>
+                                <select class="form-select mb-0" id="gender" aria-label="Gender select example">
+                                    <option selected>Gender</option>
+                                    <option value="1">Female</option>
+                                    <option value="2">Male</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input class="form-control" id="email" type="email" placeholder="name@company.com" value="{{ request.user.email }}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-group">
+                                    <label for="phone">Phone</label>
+                                    <input class="form-control" id="phone" type="number" placeholder="+12-345 678 910" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn btn-gray-800 mt-2 animate-up-2" type="submit">Update</button>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Modal Content -->
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+    <div class="d-block mb-4 mb-md-0">
+        <h2 class="h4">
+            Task information
+        </h2>
+    </div>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <!-- Modal Button -->
+        <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-form-signup">Edit Task</button>
+        <!-- End of Modal Button -->
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        
+        <div class="card card-body border-0 shadow mb-4">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h2 class="fs-5 fw-bold mb-0">{{ task.description }}</h2>
+                <a href="{% url 'allocator:delete_task' id=task.id %}" class="btn btn-outline-danger">Delete Task</a>
+            </div>
+            <div class="row mb-4 mt-4">
+                <div class="col-auto">
+                    <svg class="icon icon-sm text-gray-500" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"></path></svg>
+                </div>
+                <div class="col">
+                    <div class="progress-wrapper">
+                        <div class="progress-info">
+                            <div class="h6 mb-0">Progress</div>
+                            <div class="small fw-bold text-gray-500"><span>{{ task.progress }}% Completed</span></div>
+                        </div>
+                        <div class="progress mb-0">
+                            <div class="progress-bar bg-{{ task.progress_class }}" role="progressbar" aria-valuenow="{{ task.progress }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.progress }}%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h2 class="fs-5 fw-bold mb-1">Assigned To</h2>
+            <p>{{ task.user.username }}</p>
+            <h2 class="fs-5 fw-bold mb-1">Start Date</h2>
+            <p>{{ task.start }}</p>
+            <h2 class="fs-5 fw-bold mb-1">End Date</h2>
+            <p>{{ task.end }}</p>
+            <h2 class="fs-5 fw-bold mb-1">Project</h2>
+            <p>{{ task.project.name }}</p>
+        </div>
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h2 class="fs-5 fw-bold mb-0">Sub Tasks</h2>
+        </div>
+        {% if subtasks %}
+        <div class="table-responsive">
+            <table class="table table-centered table-nowrap mb-0 rounded">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="border-0 rounded-start">#</th>
+                        <th class="border-0">Description</th>
+                        <th class="border-0 rounded-end">action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sub in subtasks %}
+                    <!-- Item -->
+                    
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <a href="#" class="text-primary fw-bold">{{ sub.description }}</a>
+                        </td>
+                        <td>
+                            {% if sub.is_completed %}
+                            <p>Completed!</p>
+                            {% else %}
+                            <a href="{% url 'allocator:complete_task' taskid=task.id subid=sub.id %}" class="btn btn-outline-success">Mark as completed</a>
+                            {% endif %}
+                        </td>                        
+                    </tr>
+                    <!-- End of Item -->
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else }
+        <p> No Sub Task for this task </p>
+        {% endif %}
+</div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

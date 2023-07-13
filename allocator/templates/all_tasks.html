@@ -1,0 +1,111 @@
+{% extends "includes/base-dash.html" %}
+
+{% block title %} Task {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Modal Content -->
+<div class="modal fade" id="modal-form-signup" tabindex="-1" role="dialog" aria-labelledby="modal-form-signup" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="card p-3 p-lg-4">
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="text-center text-md-center mb-4 mt-md-0">
+                        <h1 class="mb-0 h4">New Task</h1>
+                    </div>
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <!-- Form -->
+                        {{ form }}
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-gray-800">Add Task</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Modal Content -->
+{% if msg %}
+<div class=" justify-content-center flex-wrap flex-md-nowrap align-items-center py-4">
+    <div class="d-block mb-4 mb-md-0">
+        <h2 class="h4">
+            {{ msg }}
+        </h2>
+    </div>
+</div>
+{% endif %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
+    <div class="d-block mb-4 mb-md-0">
+        <h2 class="h4">
+            ALL TASKS
+        </h2>
+    </div>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <!-- Modal Button -->
+        <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-form-signup">New Task</button>
+        <!-- End of Modal Button -->
+    </div>
+</div>
+
+<div class="card border-0 shadow mb-4">
+    <div class="card-body">
+        {% if tasks %}
+        <div class="table-responsive">
+            <table class="table table-centered table-nowrap mb-0 rounded">
+                <thead class="thead-light">
+                    <tr>
+                        <th class="border-0 rounded-start">#</th>
+                        <th class="border-0">Task</th>
+                        <th class="border-0">User</th>
+                        <th class="border-0">Project</th>
+                        <th class="border-0">Start</th>
+                        <th class="border-0">End</th>
+                        <th class="border-0">Status</th>
+                        <th class="border-0 rounded-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    <!-- Item -->
+                    <tr>
+                        <td>{{ forloop.counter }}</a> </td>
+                        <td>
+                            <a href="{% url 'allocator:task' id=task.id %}" class="text-primary fw-bold">{{ task.description }}</a>
+                        </td>
+                        <td>
+                            {{ task.user.username }}
+                        </td>
+                        <td>
+                            {{ task.project.name }}
+                        </td>
+                        <td>
+                            {{ task.start }}
+                        <td>
+                            {{ task.end }}
+                        </td>
+                        <td><span class="fw-bold text-{{ task.progress_class }}">{{ task.status }}</span></td>
+                        <td>
+                            <a href="{% url 'allocator:delete_task' id=task.id %}" class="btn btn-outline-danger">Delete</a>
+                        </td>                        
+                    </tr>
+                    <!-- End of Item -->
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <p class="mt-4 mb-4 text-center">No tasks yet!!!</p>
+        {% endif %}
+</div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
