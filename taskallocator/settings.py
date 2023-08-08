@@ -39,7 +39,7 @@ else:
         )
     }
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
