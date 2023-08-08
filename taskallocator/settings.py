@@ -29,6 +29,8 @@ if DEBUG:
         }
     }
 else:
+    import dj_database_url
+
     DATABASES = {
         'default': dj_database_url.config(
             # Feel free to alter this value to suit your needs.
