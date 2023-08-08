@@ -74,9 +74,8 @@ def logout_view(request):
     return HttpResponseRedirect(reverse('allocator:landing'))
 
 
-class DashboardView(View):
+class DashboardView(View, LoginRequiredMixin):
     login_url = '/'
-    redirect_field_name = '/'
 
     def get(self, request):
         title = 'Dashboard'
@@ -101,9 +100,8 @@ class DashboardView(View):
         return HttpResponse("Dashboard: post")
 
 
-class AllTaskView(View):
+class AllTaskView(View, LoginRequiredMixin):
     login_url = '/'
-    redirect_field_name = '/'
 
     def get(self, request):
         title = 'All Tasks'
@@ -170,9 +168,8 @@ class AllTaskView(View):
         return render(request, 'all_tasks.html', context)
 
 
-class TaskView(View):
+class TaskView(View, LoginRequiredMixin):
     login_url = '/'
-    redirect_field_name = '/'
 
     def get(self, request, id):
         title = 'Tasks'
@@ -190,9 +187,8 @@ class TaskView(View):
         return HttpResponse("Task: post")
 
 
-class DeleteTaskView(View):
+class DeleteTaskView(View, LoginRequiredMixin):
     login_url = '/'
-    redirect_field_name = '/'
 
     def get(self, request, id):
         task = Task.objects.get(id=id)
@@ -204,7 +200,6 @@ class DeleteTaskView(View):
 
 class CompleteSubTaskView(View):
     login_url = '/'
-    redirect_field_name = '/'
 
     def get(self, request, taskid, subid):
         sub = SubTask.objects.get(id=subid)
