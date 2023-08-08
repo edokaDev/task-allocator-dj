@@ -39,7 +39,7 @@ else:
         )
     }
 
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles/')
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
