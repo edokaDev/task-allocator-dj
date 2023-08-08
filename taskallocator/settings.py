@@ -17,14 +17,31 @@ import environ, os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
+DEBUG = 'RENDER' not in os.environ
+
+if DEBUG:
+    environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        'default': dj_database_url.config(
+            # Feel free to alter this value to suit your needs.
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600
+        )
+    }
+
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'RENDER' not in os.environ
 
 ALLOWED_HOSTS = []
 
@@ -75,31 +92,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'taskallocator.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-if DEBUG:
-    environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-else:
-    DATABASES = {
-        'default': dj_database_url.config(
-            # Feel free to alter this value to suit your needs.
-            default=os.environ.get('DATABASE_URL'),
-            conn_max_age=600
-        )
-    }
-
-    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
 
 
 # Password validation
