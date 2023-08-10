@@ -35,7 +35,7 @@ class IndexView(View):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('allocator:landing')
+                return render(request, 'dashboard.html', context)
             else:
                 context['login_error'] = 'Invalid Credentials, try again!'
             return render(request, 'landing.html', context)
@@ -86,18 +86,86 @@ class DashboardView(View, LoginRequiredMixin):
 
         context = {
             'title': title,
-            'tasks': tasks,
-            't_count': tasks.count(),
-            'users': users,
-            'u_count': users.count(),
-            'projects': project_count,
-            'notifications': notifications,
             'segment': ['dashboard'],
         }
+        if request.user.is_employee:
+            user_tasks = tasks.filter(user=request.user)
+            
+            completed = 0
+            for t in user_tasks:
+                if t.status == 'completed':
+                    completed += 1
+
+            context['tasks'] = user_tasks[:5]
+            context['task_count'] = user_tasks.count()
+            context['completed_tasks'] = completed #status='completed'
+            context['outstanding_tasks'] = user_tasks.count() - completed #status='inprogress'
+            context['notifications'] = notifications
+
+            return render(request, 'employee_dashboard.html', context)
         return render(request, 'dashboard.html', context)
 
     def post(self, request):
         return HttpResponse("Dashboard: post")
+
+class AllNotificationsView(View, LoginRequiredMixin):
+    login_url = '/'
+
+    def get(self, request):
+        if not request.user.is_employee:
+            return HttpResponseRedirect(reverse('allocator:dashboard'))
+        title = 'Dashboard'
+        notifications = Notification.objects.filter(user=request.user)
+        context = {
+            'title': title,
+            'segment': ['dashboard'],
+            'notifications': notifications
+        }
+        return render(request, 'all_notifications.html', context)
+
+
+class NotificationView(View, LoginRequiredMixin):
+    login_url = '/'
+
+    def get(self, request, id):
+        if not request.user.is_employee:
+            return HttpResponseRedirect(reverse('allocator:dashboard'))
+        title = 'Dashboard'
+        notification = Notification.objects.get(pk=id)
+        context = {
+            'title': title,
+            'segment': ['dashboard'],
+            'notification': notification,
+            'notifications': Notification.objects.filter(user=request.user)
+        }
+        return render(request, 'notification.html', context)
+
+class DeleteNotificationView(View, LoginRequiredMixin):
+    login_url = '/'
+
+    def get(self, request, id):
+        notification = Notification.objects.get(id=id)
+        if notification != None:
+            notification.delete()
+            return HttpResponseRedirect(reverse('allocator:dashboard'))
+        else:
+            return HttpResponseRedirect(reverse('allocator:notification', args=(id,)))
+    
+class EmployeeTasksView(View, LoginRequiredMixin):
+    login_url = '/'
+
+    def get(self, request):
+        if not request.user.is_employee:
+            return HttpResponseRedirect(reverse('allocator:dashboard'))
+        title = 'My Tasks'
+        tasks = Task.objects.all().filter(user=request.user)
+
+        context = {
+            'title': title,
+            'tasks': tasks,
+            'segment': ['tasks'],
+        }
+        return render(request, 'employee_tasks.html', context)
 
 
 class AllTaskView(View, LoginRequiredMixin):

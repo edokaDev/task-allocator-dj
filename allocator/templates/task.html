@@ -80,11 +80,13 @@
             Task information
         </h2>
     </div>
+    {% if request.user.is_staff %}
     <div class="btn-toolbar mb-2 mb-md-0">
         <!-- Modal Button -->
         <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-form-signup">Edit Task</button>
         <!-- End of Modal Button -->
     </div>
+    {% endif %}
 </div>
 
 <div class="row">
@@ -93,7 +95,9 @@
         <div class="card card-body border-0 shadow mb-4">
             <div class="card-header d-flex align-items-center justify-content-between">
                 <h2 class="fs-5 fw-bold mb-0">{{ task.description }}</h2>
+                {% if request.user.is_staff %}
                 <a href="{% url 'allocator:delete_task' id=task.id %}" class="btn btn-outline-danger">Delete Task</a>
+                {% endif %}
             </div>
             <div class="row mb-4 mt-4">
                 <div class="col-auto">
@@ -111,8 +115,10 @@
                     </div>
                 </div>
             </div>
+            {% if request.user.is_staff %}
             <h2 class="fs-5 fw-bold mb-1">Assigned To</h2>
             <p>{{ task.user.username }}</p>
+            {% endif %}
             <h2 class="fs-5 fw-bold mb-1">Start Date</h2>
             <p>{{ task.start }}</p>
             <h2 class="fs-5 fw-bold mb-1">End Date</h2>
@@ -155,7 +161,7 @@
                 </tbody>
             </table>
         </div>
-        {% else }
+        {% else %}
         <p> No Sub Task for this task </p>
         {% endif %}
 </div>
