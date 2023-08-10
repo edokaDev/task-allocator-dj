@@ -35,7 +35,7 @@ class IndexView(View):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return render(request, 'dashboard.html', context)
+                return redirect('allocator:dashboard')
             else:
                 context['login_error'] = 'Invalid Credentials, try again!'
             return render(request, 'landing.html', context)
@@ -74,7 +74,7 @@ def logout_view(request):
     return HttpResponseRedirect(reverse('allocator:landing'))
 
 
-class DashboardView(View, LoginRequiredMixin):
+class DashboardView(LoginRequiredMixin, View):
     login_url = '/'
 
     def get(self, request):
@@ -123,7 +123,7 @@ class DashboardView(View, LoginRequiredMixin):
     def post(self, request):
         return HttpResponse("Dashboard: post")
 
-class AllNotificationsView(View, LoginRequiredMixin):
+class AllNotificationsView(LoginRequiredMixin, View):
     login_url = '/'
 
     def get(self, request):
@@ -139,7 +139,7 @@ class AllNotificationsView(View, LoginRequiredMixin):
         return render(request, 'all_notifications.html', context)
 
 
-class NotificationView(View, LoginRequiredMixin):
+class NotificationView(LoginRequiredMixin, View):
     login_url = '/'
 
     def get(self, request, id):
@@ -155,7 +155,7 @@ class NotificationView(View, LoginRequiredMixin):
         }
         return render(request, 'notification.html', context)
 
-class DeleteNotificationView(View, LoginRequiredMixin):
+class DeleteNotificationView(LoginRequiredMixin, View):
     login_url = '/'
 
     def get(self, request, id):
@@ -166,7 +166,7 @@ class DeleteNotificationView(View, LoginRequiredMixin):
         else:
             return HttpResponseRedirect(reverse('allocator:notification', args=(id,)))
     
-class EmployeeTasksView(View, LoginRequiredMixin):
+class EmployeeTasksView(LoginRequiredMixin, View):
     login_url = '/'
 
     def get(self, request):
@@ -182,7 +182,7 @@ class EmployeeTasksView(View, LoginRequiredMixin):
         }
         return render(request, 'employee_tasks.html', context)
 
-class AllProjectsView(View, LoginRequiredMixin):
+class AllProjectsView(LoginRequiredMixin, View):
     login_url = '/'
 
     def get(self, request):
@@ -228,7 +228,7 @@ class AllProjectsView(View, LoginRequiredMixin):
         return render(request, 'all_projects.html', context)
 
 
-class ProjectView(View, LoginRequiredMixin):
+class ProjectView(LoginRequiredMixin, View):
     login_url = '/'
 
     def get(self, request, id):
@@ -291,7 +291,7 @@ class ProjectView(View, LoginRequiredMixin):
 
 
 
-class DeleteProjectView(View, LoginRequiredMixin):
+class DeleteProjectView(LoginRequiredMixin, View):
     login_url = '/'
 
     def get(self, request, id):
@@ -304,7 +304,7 @@ class DeleteProjectView(View, LoginRequiredMixin):
 
 
 
-class AllTaskView(View, LoginRequiredMixin):
+class AllTaskView(LoginRequiredMixin, View):
     login_url = '/'
 
     def get(self, request):
@@ -372,7 +372,7 @@ class AllTaskView(View, LoginRequiredMixin):
         return render(request, 'all_tasks.html', context)
 
 
-class TaskView(View, LoginRequiredMixin):
+class TaskView(LoginRequiredMixin, View):
     login_url = '/'
 
     def get(self, request, id):
@@ -391,7 +391,7 @@ class TaskView(View, LoginRequiredMixin):
         return HttpResponse("Task: post")
 
 
-class DeleteTaskView(View, LoginRequiredMixin):
+class DeleteTaskView(LoginRequiredMixin, View):
     login_url = '/'
 
     def get(self, request, id):
@@ -414,7 +414,7 @@ class CompleteSubTaskView(View):
         return HttpResponseRedirect(reverse('allocator:task', args=(taskid,)))
 
 
-class AllUserView(View, LoginRequiredMixin):
+class AllUserView(LoginRequiredMixin, View):
     login_url = '/'
 
     def get(self, request):
