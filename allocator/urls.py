@@ -10,7 +10,11 @@ from .views import (
     NotificationView,
     AllNotificationsView,
     DeleteNotificationView,
-    EmployeeTasksView
+    EmployeeTasksView,
+    AllProjectsView,
+    ProjectView,
+    DeleteProjectView,
+    AllUserView
 )
 
 app_name = 'allocator'
@@ -27,4 +31,8 @@ urlpatterns = [
     path('notifications/', AllNotificationsView.as_view(), name='all_notifications'),
     path('notifications/<int:id>/', NotificationView.as_view(), name='notification'),
     path('notifications/<int:id>/delete', DeleteNotificationView.as_view(), name='delete_notification'),
+    path('projects/', AllProjectsView.as_view(), name='all_projects'),
+    path('projects/<int:id>/', ProjectView.as_view(), name='project'),
+    path('projects/<int:id>/delete', DeleteProjectView.as_view(), name='delete_project'),
+    path('users/', AllUserView.as_view(), name='users'),
 ]

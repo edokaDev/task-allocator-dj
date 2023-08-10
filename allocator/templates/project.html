@@ -8,6 +8,31 @@
 {% block content %}
 
 <!-- Modal Content -->
+<div class="modal fade" id="modal-form-new-task" tabindex="-1" role="dialog" aria-labelledby="modal-form-signup" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body p-0">
+                <div class="card p-3 p-lg-4">
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="text-center text-md-center mb-4 mt-md-0">
+                        <h1 class="mb-0 h4">New Task</h1>
+                    </div>
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        <!-- Form -->
+                        {{ task_form }}
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-gray-800">Add Task</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Modal Content -->
+
+<!-- Modal Content -->
 <div class="modal fade" id="modal-form-signup" tabindex="-1" role="dialog" aria-labelledby="modal-form-signup" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -15,7 +40,7 @@
                 <div class="card p-3 p-lg-4">
                     <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
                     <div class="text-center text-md-center mb-4 mt-md-0">
-                        <h1 class="mb-0 h4">Edit Task</h1>
+                        <h1 class="mb-0 h4">Edit Project</h1>
                     </div>
                     <form>
                         <div class="row">
@@ -77,16 +102,14 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center py-4">
     <div class="d-block mb-4 mb-md-0">
         <h2 class="h4">
-            Task information
+            Project Details
         </h2>
     </div>
-    {% if request.user.is_staff %}
     <div class="btn-toolbar mb-2 mb-md-0">
         <!-- Modal Button -->
-        <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-form-signup">Edit Task</button>
+        <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-form-signup">Edit Project</button>
         <!-- End of Modal Button -->
     </div>
-    {% endif %}
 </div>
 
 <div class="row">
@@ -94,10 +117,8 @@
         
         <div class="card card-body border-0 shadow mb-4">
             <div class="card-header d-flex align-items-center justify-content-between">
-                <h2 class="fs-5 fw-bold mb-0">{{ task.description }}</h2>
-                {% if request.user.is_staff %}
-                <a href="{% url 'allocator:delete_task' id=task.id %}" class="btn btn-outline-danger">Delete Task</a>
-                {% endif %}
+                <h2 class="fs-5 fw-bold mb-0">{{ project.name }}</h2>
+                <a href="{% url 'allocator:delete_project' id=project.id %}" class="btn btn-outline-danger">Delete Project</a>
             </div>
             <div class="row mb-4 mt-4">
                 <div class="col-auto">
@@ -107,56 +128,45 @@
                     <div class="progress-wrapper">
                         <div class="progress-info">
                             <div class="h6 mb-0">Progress</div>
-                            <div class="small fw-bold text-gray-500"><span>{{ task.progress }}% Completed</span></div>
+                            <div class="small fw-bold text-gray-500"><span>{{ project.progress }}% Completed</span></div>
                         </div>
                         <div class="progress mb-0">
-                            <div class="progress-bar bg-{{ task.progress_class }}" role="progressbar" aria-valuenow="{{ task.progress }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ task.progress }}%;"></div>
+                            <div class="progress-bar bg-{{ project.progress_class }}" role="progressbar" aria-valuenow="{{ project.progress }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ project.progress }}%;"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            {% if request.user.is_staff %}
-            <h2 class="fs-5 fw-bold mb-1">Assigned To</h2>
-            <p>{{ task.user.username }}</p>
-            {% endif %}
-            <h2 class="fs-5 fw-bold mb-1">Status</h2>
-            <p>{{ task.status }}</p>
+            <h2 class="fs-5 fw-bold mb-1">Description</h2>
+            <p>{{ project.description }}</p>
             <h2 class="fs-5 fw-bold mb-1">Start Date</h2>
-            <p>{{ task.start }}</p>
+            <p>{{ project.start }}</p>
             <h2 class="fs-5 fw-bold mb-1">End Date</h2>
-            <p>{{ task.end }}</p>
-            <h2 class="fs-5 fw-bold mb-1">Project</h2>
-            <p>{{ task.project.name }}</p>
+            <p>{{ project.end }}</p>
         </div>
         <div class="card-header d-flex align-items-center justify-content-between">
-            <h2 class="fs-5 fw-bold mb-0">Sub Tasks</h2>
+            <h2 class="fs-5 fw-bold mb-0">Project Tasks</h2>
+            <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-form-new-task">New Task</button>
         </div>
-        {% if subtasks %}
+        {% if tasks %}
         <div class="table-responsive">
             <table class="table table-centered table-nowrap mb-0 rounded">
                 <thead class="thead-light">
                     <tr>
                         <th class="border-0 rounded-start">#</th>
                         <th class="border-0">Description</th>
-                        <th class="border-0 rounded-end">action</th>
+                        <th class="border-0 rounded-end">Status</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for sub in subtasks %}
+                    {% for task in tasks %}
                     <!-- Item -->
                     
                     <tr>
                         <td>{{ forloop.counter }}</td>
                         <td>
-                            <a href="#" class="text-primary fw-bold">{{ sub.description }}</a>
+                            <a href="{% url 'allocator:task' id=task.id %}" class="text-primary fw-bold">{{ task.description }}</a>
                         </td>
-                        <td>
-                            {% if sub.is_completed %}
-                            <p>Completed!</p>
-                            {% else %}
-                            <a href="{% url 'allocator:complete_task' taskid=task.id subid=sub.id %}" class="btn btn-outline-success">Mark as completed</a>
-                            {% endif %}
-                        </td>                        
+                        <td> {{ task.status }} </td>                        
                     </tr>
                     <!-- End of Item -->
                     {% endfor %}
@@ -164,7 +174,7 @@
             </table>
         </div>
         {% else %}
-        <p> No Sub Task for this task </p>
+        <p> No Task for this project yet! </p>
         {% endif %}
 </div>
 </div>

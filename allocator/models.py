@@ -23,11 +23,39 @@ class Project(models.Model):
     description = models.CharField(max_length=40)
     start = models.DateField(auto_now_add=True)
     end = models.DateField()
-    status = models.CharField(default='in-progress', max_length=30)
 
     def __str__(self):
         return self.name
 
+    @property
+    def progress(self):
+        tasks = Task.objects.filter(project_id=self.pk)
+        all_subs = 0
+        completed = 0
+        for t in tasks:
+            subtasks = SubTask.objects.filter(task_id=t.id)
+            all_subs += subtasks.count()
+            for sub in subtasks:
+                if sub.is_completed:
+                    completed += 1
+
+        if all_subs == 0 or completed == 0:
+            return 0
+        return 100 * completed // all_subs
+    
+    @property
+    def progress_class(self):
+        if self.progress < 40:
+            return 'danger'
+        elif self.progress < 70:
+            return 'warning'
+        return 'success'
+
+    @property
+    def status(self):
+        if self.progress < 100:
+            return 'inprogress'
+        return 'completed'
 
 class Task(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

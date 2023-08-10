@@ -11,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
 
 from .models import User, Task, Project, Notification, SubTask
-from .forms import TaskForm
+from .forms import TaskForm, ProjectForm
 
 
 # Create your views here.
@@ -182,6 +182,127 @@ class EmployeeTasksView(View, LoginRequiredMixin):
         }
         return render(request, 'employee_tasks.html', context)
 
+class AllProjectsView(View, LoginRequiredMixin):
+    login_url = '/'
+
+    def get(self, request):
+        if request.user.is_employee:
+            return HttpResponseRedirect(reverse('allocator:dashboard'))
+        title = 'All Projects'
+        projects = Project.objects.all()
+        form = ProjectForm(request.POST or None)
+
+        context = {
+            'title': title,
+            'projects': projects,
+            'segment': ['projects'],
+            'project_form': form,
+        }
+        return render(request, 'all_projects.html', context)
+
+    def post(self, request):
+        if request.user.is_employee:
+            return HttpResponseRedirect(reverse('allocator:dashboard'))
+        title = 'All Projects'
+        projects = Project.objects.all()
+        form = ProjectForm(request.POST or None)
+        if form.is_valid():
+            
+            new_project = Project(
+                name=form.cleaned_data.get("name"),
+                description=form.cleaned_data.get("description"),
+                end = form.cleaned_data.get("end"),
+            )
+            new_project.save()
+            msg = 'project creation successful'
+
+        else:
+            msg = 'Error validating the form'
+
+        context = {
+            'title': title,
+            'projects': projects,
+            'segment': ['projects'],
+            'project_form': form,
+        }
+        return render(request, 'all_projects.html', context)
+
+
+class ProjectView(View, LoginRequiredMixin):
+    login_url = '/'
+
+    def get(self, request, id):
+        title = 'Project'
+        project = Project.objects.get(id=id)
+        tasks = Task.objects.filter(project_id=id)
+        form = TaskForm(request.POST or None)
+
+        context = {
+            'title': title,
+            'project': project,
+            'tasks': tasks,
+            'segment': ['projects'],
+            'task_form': form
+        }
+        return render(request, 'project.html', context)
+
+    def post(self, request, id):
+        title = 'All Tasks'
+        tasks = Task.objects.all()
+        project = Project.objects.get(id=id)
+        users = User.objects.all() # employees
+        project_count = Project.objects.all().count()
+        form = TaskForm(request.POST or None)
+        if form.is_valid():
+            
+            new_task = Task(
+                description=form.cleaned_data.get("description"),
+                project_id=id,
+                user = form.cleaned_data.get("user"),
+                end = form.cleaned_data.get("end")
+            )
+            new_task.save()
+            subs = form.cleaned_data.get("sub_tasks").split(",")
+            if len(subs) == 0:
+                SubTask.objects.create(
+                    description=form.cleaned_data.get("description"),
+                    task_id = new_task.id
+                )
+            else:
+                for sub in subs:
+                    SubTask.objects.create(
+                        description=sub.strip(),
+                        task_id = new_task.id
+                    )
+            msg = 'task creation successful'
+
+        else:
+            msg = 'Error validating the form'
+
+        context = {
+            'title': title,
+            'project': project,
+            'tasks': tasks,
+            'segment': ['projects'],
+            'task_form': form,
+            'msg': msg
+        }
+        return render(request, 'project.html', context)
+
+
+
+class DeleteProjectView(View, LoginRequiredMixin):
+    login_url = '/'
+
+    def get(self, request, id):
+        project = Project.objects.get(id=id)
+        if project != None:
+            project.delete()
+            return HttpResponseRedirect(reverse('allocator:projects'))
+        else:
+            return HttpResponseRedirect(reverse('allocator:project', args=(id,)))
+
+
 
 class AllTaskView(View, LoginRequiredMixin):
     login_url = '/'
@@ -291,3 +412,23 @@ class CompleteSubTaskView(View):
             sub.is_completed = True
             sub.save()
         return HttpResponseRedirect(reverse('allocator:task', args=(taskid,)))
+
+
+class AllUserView(View, LoginRequiredMixin):
+    login_url = '/'
+
+    def get(self, request):
+        if request.user.is_employee:
+            return HttpResponseRedirect(reverse('allocator:dashboard'))
+        title = 'All Users'
+        if request.user.is_manager:
+            users = User.objects.filter(is_employee=True)
+        else:
+            users = User.objects.all()
+        context = {
+            'title': title,
+            'users': users,
+            'segment': ['employees', 'users'],
+        }
+        return render(request, 'users.html', context)
+

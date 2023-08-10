@@ -8,7 +8,7 @@ class DateInput(forms.DateInput):
 
 class TaskForm(forms.Form):
     user = forms.ModelChoiceField(
-        queryset=User.objects.all(),
+        queryset=User.objects.filter(is_employee=True),
         widget=forms.Select(
             attrs={
                 "class": "form-control"
@@ -31,10 +31,28 @@ class TaskForm(forms.Form):
             }
         )
     )
-    project = forms.ModelChoiceField(
-        queryset=Project.objects.all(),
-        widget=forms.Select(
+    end = forms.DateTimeField(
+        widget=DateInput(
             attrs={
+                "class": "form-control"
+            }
+        )
+    )
+
+
+class ProjectForm(forms.Form):
+    name = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Project Name",
+                "class": "form-control"
+            }
+        )
+    )
+    description = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "description",
                 "class": "form-control"
             }
         )

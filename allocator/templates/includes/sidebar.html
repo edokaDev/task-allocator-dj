@@ -65,7 +65,7 @@
       <!-- MANAGER / ADMIN LINKS -->
       {% if request.user.is_staff %}
         <li class="nav-item {% if 'projects' in segment %} active {% endif %}">
-          <a href="#" class="nav-link">
+          <a href="{% url 'allocator:all_projects' %}" class="nav-link">
             <span class="sidebar-icon">
               <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path></svg>
             </span> 
@@ -76,7 +76,7 @@
         <!-- MANAGER ONLY -->
         {% if request.user.is_manager %}
           <li class="nav-item {% if 'employees' in segment %} active {% endif %}">
-            <a href="#" class="nav-link">
+            <a href="{% url 'allocator:users' %}" class="nav-link">
               <span class="sidebar-icon">
                 <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path></svg>
               </span> 
@@ -86,7 +86,7 @@
         {% else %}
         <!-- ADMIN ONLY -->
           <li class="nav-item {% if 'users' in segment %} active {% endif %}">
-            <a href="#" class="nav-link">
+            <a href="{% url 'allocator:users' %}" class="nav-link">
               <span class="sidebar-icon">
                 <svg class="icon icon-xs me-2" fill="currentColor" viewBox="0 0 20 20"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path></svg>
               </span> 
