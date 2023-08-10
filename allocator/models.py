@@ -11,6 +11,11 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.first_name
+    
+    @property
+    def pending_tasks(self):
+        tasks = Task.objects.filter(user_id=self.pk)
+        return tasks.count()
 
 
 class Project(models.Model):

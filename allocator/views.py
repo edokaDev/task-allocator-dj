@@ -81,7 +81,6 @@ class DashboardView(View, LoginRequiredMixin):
         title = 'Dashboard'
         tasks = Task.objects.all()
         users = User.objects.all() # employees
-        project_count = Project.objects.all().count()
         notifications = Notification.objects.filter(user_id=request.user.id)
 
         context = {
@@ -103,7 +102,23 @@ class DashboardView(View, LoginRequiredMixin):
             context['notifications'] = notifications
 
             return render(request, 'employee_dashboard.html', context)
-        return render(request, 'dashboard.html', context)
+        else:
+            outstanding = 0
+            for t in tasks:
+                if t.status == 'inprogress':
+                    outstanding += 1
+            employees = users.filter(is_employee=True)
+            if request.user.is_manager:
+                context['users'] = employees
+                context['user_count'] = employees.count()
+            else:
+                context['users'] = users
+                context['user_count'] = users.count()
+            context['tasks'] = tasks[:5]
+            context['outstanding'] = outstanding
+            context['project_count'] = Project.objects.all().count()
+
+            return render(request, 'staff_dashboard.html', context)
 
     def post(self, request):
         return HttpResponse("Dashboard: post")
