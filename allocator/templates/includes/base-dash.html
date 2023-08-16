@@ -13,16 +13,6 @@
 
 <!-- Specific Page JS goes HERE  -->    
 {% block stylesheets %}{% endblock stylesheets %}
-<script>
-    const x_label = [];
-    const y_label = [];
-    {% for x in x_labels %}
-    x_label.push("{{x}}");
-    {% endfor %}
-    {% for y in y_labels %}
-    y_label.push("{{y}}");
-    {% endfor %}
-</script>
 </head>
 <body>
 

@@ -17,18 +17,21 @@ from .forms import TaskForm, ProjectForm
 # Create your views here.
 
 class IndexView(View):
+    title = 'Welcome'
+
     def get(self, request):
-        title = 'Welcome'
 
         context = {
-            'title': title,
+            'title': self.title,
         }
         # return HttpResponse("Home Page")
         return render(request, 'landing.html', context)
 
     def post(self, request):
+        context = {
+            'title': self.title,
+        }
         if 'login' in request.POST:
-            context = {}
             username = request.POST['username']
             password = request.POST['password']
 
@@ -37,7 +40,7 @@ class IndexView(View):
                 login(request, user)
                 return redirect('allocator:dashboard')
             else:
-                context['login_error'] = 'Invalid Credentials, try again!'
+                context['message'] = 'Invalid Credentials, try again!'
             return render(request, 'landing.html', context)
 
         if 'register' in request.POST:
@@ -46,25 +49,34 @@ class IndexView(View):
             last_name = request.POST['last_name']
             password = request.POST['password']
 
-            new_user = User(
-                username = username,
-                email = username,
-                first_name = first_name,
-                last_name = last_name,
-            )
-            if 'manager' in request.POST:
-                new_user.is_manager = True
-            else:
-                new_user.is_employee = True
-            new_user.set_password(password)
+            # check if user exist
+            try:
 
-            new_user.save()
+                user_exist = User.objects.get(username=username)
+                if user_exist:
+                    context['message'] = 'Username already taken'
+                    return render(request, 'landing.html', context)
+            except:
+                new_user = User(
+                    username = username,
+                    email = username,
+                    first_name = first_name,
+                    last_name = last_name,
+                )
+                if 'manager' in request.POST:
+                    new_user.is_manager = True
+                    new_user.is_staff = True
+                else:
+                    new_user.is_employee = True
+                new_user.set_password(password)
 
-            user = authenticate(request, username=username, password=password)
+                new_user.save()
 
-            if user is not None:
-                login(request, user)
-                return redirect('allocator:dashboard')
+                user = authenticate(request, username=username, password=password)
+
+                if user is not None:
+                    login(request, user)
+                    return redirect('allocator:dashboard')
             return HttpResponse('unsuccessful')
 
 
@@ -302,74 +314,6 @@ class DeleteProjectView(LoginRequiredMixin, View):
         else:
             return HttpResponseRedirect(reverse('allocator:project', args=(id,)))
 
-
-
-class AllTaskView(LoginRequiredMixin, View):
-    login_url = '/'
-
-    def get(self, request):
-        title = 'All Tasks'
-        tasks = Task.objects.all()
-        users = User.objects.all() # employees
-        project_count = Project.objects.all().count()
-        form = TaskForm(request.POST or None)
-
-        context = {
-            'title': title,
-            'tasks': tasks,
-            't_count': tasks.count(),
-            'users': users,
-            'u_count': users.count(),
-            'projects': project_count,
-            'segment': ['tasks', 'all-task'],
-            'form': form
-        }
-        return render(request, 'all_tasks.html', context)
-
-    def post(self, request):
-        title = 'All Tasks'
-        tasks = Task.objects.all()
-        users = User.objects.all() # employees
-        project_count = Project.objects.all().count()
-        form = TaskForm(request.POST or None)
-        if form.is_valid():
-            
-            new_task = Task(
-                description=form.cleaned_data.get("description"),
-                project=form.cleaned_data.get("project"),
-                user = form.cleaned_data.get("user"),
-                end = form.cleaned_data.get("end")
-            )
-            new_task.save()
-            subs = form.cleaned_data.get("sub_tasks").split(",")
-            if len(subs) == 0:
-                SubTask.objects.create(
-                    description=form.cleaned_data.get("description"),
-                    task_id = new_task.id
-                )
-            else:
-                for sub in subs:
-                    SubTask.objects.create(
-                        description=sub.strip(),
-                        task_id = new_task.id
-                    )
-            msg = 'task creation successful'
-
-        else:
-            msg = 'Error validating the form'
-
-        context = {
-            'title': title,
-            'tasks': tasks,
-            't_count': tasks.count(),
-            'users': users,
-            'u_count': users.count(),
-            'projects': project_count,
-            'segment': ['tasks', 'all-task'],
-            'form': form,
-            'msg': msg
-        }
-        return render(request, 'all_tasks.html', context)
 
 
 class TaskView(LoginRequiredMixin, View):

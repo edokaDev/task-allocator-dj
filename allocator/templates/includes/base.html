@@ -24,13 +24,24 @@
 
 <!-- Template Main CSS File -->
 <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
-
+<script>
+  {% if message %}
+    var msg = document.getElementById('msg');
+    msg.style.display = "block";
+    alert({{ message }});
+  {% endif %}
+</script>
   {% block css %}
   {% endblock css %}
 
 </head>
 
 <body>
+  <!-- ======= POST Message ======= -->
+  <div id="msg" class="container-fluid d-flex align-items-center justify-content-center mb-4" style="display: none;background-color:aliceblue;">
+    <h4 style="color: red;">{{ message }}</h4>
+  </div>
+    <!-- ======= end of POST Message ======= -->
   <!-- ======= Header ======= -->
   <header id="header" class="header fixed-top">
     <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
