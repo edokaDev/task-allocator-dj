@@ -12,7 +12,7 @@
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <!-- <link href="assets/img/favicon.png" rel="icon"> -->
+  <link href="{% static 'assets/img/logo.png' %}" rel="icon">
   <!-- <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon"> -->
 
   <!-- Google Fonts -->
@@ -28,7 +28,6 @@
   {% if message %}
     var msg = document.getElementById('msg');
     msg.style.display = "block";
-    alert({{ message }});
   {% endif %}
 </script>
   {% block css %}
@@ -38,7 +37,7 @@
 
 <body>
   <!-- ======= POST Message ======= -->
-  <div id="msg" class="container-fluid d-flex align-items-center justify-content-center mb-4" style="display: none;background-color:aliceblue;">
+  <div id="msg" class="container-fluid d-flex align-items-center justify-content-center" style="display: none;">
     <h4 style="color: red;">{{ message }}</h4>
   </div>
     <!-- ======= end of POST Message ======= -->

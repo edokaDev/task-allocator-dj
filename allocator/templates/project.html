@@ -164,7 +164,10 @@
                     <tr>
                         <td>{{ forloop.counter }}</td>
                         <td>
-                            <a href="{% url 'allocator:task' id=task.id %}" class="text-primary fw-bold">{{ task.description }}</a>
+                            {{ task.description }}
+                            <span>
+                                <a href="{% url 'allocator:task' id=task.id %}" class="btn btn-sm btn-success">See details</a>
+                            </span>
                         </td>
                         <td> {{ task.status }} </td>                        
                     </tr>

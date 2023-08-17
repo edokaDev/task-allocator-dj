@@ -146,7 +146,8 @@ class AllNotificationsView(LoginRequiredMixin, View):
         context = {
             'title': title,
             'segment': ['dashboard'],
-            'notifications': notifications
+            'notifications': notifications,
+            'back': True
         }
         return render(request, 'all_notifications.html', context)
 
@@ -163,7 +164,8 @@ class NotificationView(LoginRequiredMixin, View):
             'title': title,
             'segment': ['dashboard'],
             'notification': notification,
-            'notifications': Notification.objects.filter(user=request.user)
+            'notifications': Notification.objects.filter(user=request.user),
+            'back': True
         }
         return render(request, 'notification.html', context)
 
@@ -191,6 +193,7 @@ class EmployeeTasksView(LoginRequiredMixin, View):
             'title': title,
             'tasks': tasks,
             'segment': ['tasks'],
+            'back': True
         }
         return render(request, 'employee_tasks.html', context)
 
@@ -209,6 +212,7 @@ class AllProjectsView(LoginRequiredMixin, View):
             'projects': projects,
             'segment': ['projects'],
             'project_form': form,
+            'back': True
         }
         return render(request, 'all_projects.html', context)
 
@@ -236,6 +240,7 @@ class AllProjectsView(LoginRequiredMixin, View):
             'projects': projects,
             'segment': ['projects'],
             'project_form': form,
+            'back': True
         }
         return render(request, 'all_projects.html', context)
 
@@ -254,7 +259,8 @@ class ProjectView(LoginRequiredMixin, View):
             'project': project,
             'tasks': tasks,
             'segment': ['projects'],
-            'task_form': form
+            'task_form': form,
+            'back': True
         }
         return render(request, 'project.html', context)
 
@@ -297,7 +303,8 @@ class ProjectView(LoginRequiredMixin, View):
             'tasks': tasks,
             'segment': ['projects'],
             'task_form': form,
-            'msg': msg
+            'msg': msg,
+            'back': True
         }
         return render(request, 'project.html', context)
 
@@ -329,6 +336,7 @@ class TaskView(LoginRequiredMixin, View):
             'task': task,
             'subtasks': subs,
             'segment': ['tasks', 'one-task'],
+            'back': True
         }
         return render(request, 'task.html', context)
     def post(self, request, id):
@@ -373,6 +381,7 @@ class AllUserView(LoginRequiredMixin, View):
             'title': title,
             'users': users,
             'segment': ['employees', 'users'],
+            'back': True
         }
         return render(request, 'users.html', context)
 
