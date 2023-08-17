@@ -111,7 +111,6 @@
         "trail"
         "form";
     grid-gap: 15px;
-    margin: 20px;
 }
 
 #form-area #form {
@@ -180,7 +179,7 @@
 
 @media screen and (max-width: 600px ) {
     .inputmodal .modal-content {
-        width: 60%;
+        width: 90%;
     }
 
     
