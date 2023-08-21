@@ -13,6 +13,7 @@ from django.contrib.auth import authenticate, login, logout
 from .models import User, Task, Project, Notification, SubTask
 from .forms import TaskForm, ProjectForm
 
+import datetime
 
 # Create your views here.
 
@@ -309,6 +310,31 @@ class ProjectView(LoginRequiredMixin, View):
         return render(request, 'project.html', context)
 
 
+class EditProjectView(LoginRequiredMixin, View):
+    login_url = '/'
+
+    def get(self, request, id):
+        title = 'Edit Project'
+        project = Project.objects.get(id=id)
+
+        context = {
+            'title': title,
+            'project': project,
+            'segment': ['projects'],
+            'back': True
+        }
+        return render(request, 'edit_project.html', context)
+
+    def post(self, request, id):
+        project = Project.objects.get(id=id)
+
+        project.name = request.POST['name']
+        project.description = request.POST['description']
+
+        project.save()
+
+        return HttpResponseRedirect(reverse('allocator:project', args=(id,)))
+
 
 class DeleteProjectView(LoginRequiredMixin, View):
     login_url = '/'
@@ -317,9 +343,10 @@ class DeleteProjectView(LoginRequiredMixin, View):
         project = Project.objects.get(id=id)
         if project != None:
             project.delete()
-            return HttpResponseRedirect(reverse('allocator:projects'))
+            return HttpResponseRedirect(reverse('allocator:all_projects'))
         else:
             return HttpResponseRedirect(reverse('allocator:project', args=(id,)))
+
 
 
 

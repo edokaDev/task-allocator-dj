@@ -83,8 +83,9 @@
                             {{ project.end }}
                         <td><span class="fw-bold text-{{ project.progress_class }}">{{ project.status }}</span></td>
                         <td>
-                            <a href="#" class="btn btn-outline-warning">Edit</a>
-                            <a href="#" class="btn btn-outline-danger">Delete</a>
+                            <a href="{% url 'allocator:project' id=project.id %}" class="btn btn-outline-success">View</a>
+                            <a href="{% url 'allocator:edit_project' id=project.id %}" class="btn btn-outline-warning">Edit</a>
+                            <a href="{% url 'allocator:delete_project' id=project.id %}" class="btn btn-outline-danger">Delete</a>
                         </td>                        
                     </tr>
                     <!-- End of Item -->
