@@ -375,9 +375,10 @@ class DeleteTaskView(LoginRequiredMixin, View):
 
     def get(self, request, id):
         task = Task.objects.get(id=id)
+        project_id = task.project.pk
         if task != None:
             task.delete()
-            return HttpResponseRedirect(reverse('allocator:tasks'))
+            return HttpResponseRedirect(reverse('allocator:project', args=(project_id,)))
         else:
             return HttpResponseRedirect(reverse('allocator:task', args=(id,)))
 
