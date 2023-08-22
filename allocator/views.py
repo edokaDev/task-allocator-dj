@@ -93,7 +93,7 @@ class DashboardView(LoginRequiredMixin, View):
     def get(self, request):
         title = 'Dashboard'
         tasks = Task.objects.all()
-        users = User.objects.all() # employees
+        users = User.objects.all().filter(is_active=True) # employees
         notifications = Notification.objects.filter(user_id=request.user.id)
 
         context = {
@@ -413,3 +413,14 @@ class AllUserView(LoginRequiredMixin, View):
         }
         return render(request, 'users.html', context)
 
+class DeactivateUserView(LoginRequiredMixin, View):
+    login_url = '/'
+
+    def get(self, request, id):
+        user = User.objects.get(id=id)
+        if user != None:
+            user.is_active = False
+            user.save()
+            return HttpResponseRedirect(reverse('allocator:dashboard'))
+        else:
+            return HttpResponseRedirect(reverse('allocator:task', args=(id,)))

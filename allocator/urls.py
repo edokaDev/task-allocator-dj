@@ -14,7 +14,8 @@ from .views import (
     ProjectView,
     DeleteProjectView,
     AllUserView,
-    EditProjectView
+    EditProjectView,
+    DeactivateUserView
 )
 
 app_name = 'allocator'
@@ -35,4 +36,5 @@ urlpatterns = [
     path('projects/<int:id>/delete', DeleteProjectView.as_view(), name='delete_project'),
     path('projects/<int:id>/edit', EditProjectView.as_view(), name='edit_project'),
     path('users/', AllUserView.as_view(), name='users'),
+    path('users/<int:id>/deactivate', DeactivateUserView.as_view(), name='deactivate_user'),
 ]
